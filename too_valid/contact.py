@@ -1,5 +1,7 @@
 __author__ = "Elena Dimchenko"
 
+import datetime
+
 class Contact:
     def __init__(self, firstname,
                  middlename,
@@ -17,12 +19,8 @@ class Contact:
                  email_2,
                  email_3,
                  homepage,
-                 birthday_day,
-                 birthday_month,
-                 birthday_year,
-                 anniversary_day,
-                 anniversary_month,
-                 anniversary_year,
+                 birthday_date,
+                 anniversary_date,
                  address_secondary,
                  phone_secondary,
                  notes
@@ -66,12 +64,10 @@ class Contact:
         self.email_2 = email_2
         self.email_3 = email_3
         self.homepage = homepage
-        self.anniversary_day = anniversary_day
-        self.anniversary_month = anniversary_month
-        self.anniversary_year = anniversary_year
-        self.birthday_day = birthday_day
-        self.birthday_month = birthday_month
-        self.birthday_year = birthday_year
+        if birthday_date is not None:
+            self.birthday_date = datetime.datetime.strptime(birthday_date,"%d-%m-%Y").date()
+        if anniversary_date is not None:
+            self.anniversary_date = datetime.datetime.strptime(anniversary_date,"%d-%m-%Y").date()
         self.address_secondary = address_secondary
         self.phone_secondary = phone_secondary
         self.notes = notes
