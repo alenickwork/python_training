@@ -3,12 +3,14 @@ __author__ = "Elena Dimchenko"
 """
 Task #4: refactor for fixture usage
 """
-from application import Application
-from contact_single_fields import Contact
-from group import Group
+import os
 
 import pytest
-import os
+
+from fixture.application import Application
+from model.contact import Contact
+from model.group import Group
+
 
 @pytest.fixture()
 def app(request):
@@ -16,14 +18,14 @@ def app(request):
     request.addfinalizer(fixture.destroy)
     return fixture
 
-def test_test_add_contact(app):
-    app.login(username = "admin",
+def test_add_contact(app):
+    app.session.login(username = "admin",
               password = "secret")
-    app.create_new_contact(Contact(firstname = "test_fn",
+    app.contact.create(Contact(firstname = "test_fn",
                                     middlename = "test_mn",
                                     lastname = "test_ln",
                                     nickname = "test_nn",
-                                    photo_link = os.path.join(os.path.dirname(__file__),
+                                    photo_link = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                                               "data",
                                                               "Cute-White-Pigeon-Display-Picture.jpg"),
                                     title = "test_title",
@@ -47,15 +49,15 @@ def test_test_add_contact(app):
                                     phone_secondary = "test_ph2",
                                     notes = "12121221")
                             )
-    app.logout()
+    app.session.logout()
 
-def test_test_add_group(app):
-    app.login(username = "admin",
+def test_add_group(app):
+    app.session.login(username = "admin",
               password = "secret")
-    app.create_new_group(Group(name = "1", header = "1", footer = "1"))
-    app.logout()
+    app.group.create(Group(name = "1", header = "1", footer = "1"))
+    app.session.logout()
 
-def test_test_add_empty_group(app):
-    app.login(username = "admin",
+def test_add_empty_group(app):
+    app.session.login(username = "admin",
               password = "secret")
-    app.create_new_group(Group(name = "", header = "", footer = ""))
+    app.group.create(Group(name = "", header = "", footer = ""))

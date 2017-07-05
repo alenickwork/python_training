@@ -3,17 +3,18 @@ __author__ = "Elena Dimchenko"
 """
 Task #3: add new contact
 """
+import os
+import unittest
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
-import unittest
+from model.contact import Contact
 
-from contact_single_fields import Contact
-import os
 
 def is_alert_present(wd):
     try:
-        wd.switch_to_alert().text
+        wd.switch_to_alert().text_input
         return True
     except:
         return False
