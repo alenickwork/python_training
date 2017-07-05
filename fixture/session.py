@@ -1,5 +1,9 @@
 addressbook_url = "http://localhost/addressbook/"
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 class SessionHelper:
 
     def __init__(self,app):
@@ -18,3 +22,5 @@ class SessionHelper:
     def logout(self):
         print("Logout")
         self.app.page_objects.link_click("Logout")
+        wait = WebDriverWait(self.app.wd, 10)
+        wait.until(EC.element_to_be_clickable((By.ID, 'LoginForm')))
