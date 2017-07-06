@@ -36,3 +36,6 @@ class PageObjectsHelper:
     def submit(self):
         self.button_click("submit")
 
+    def update(self):
+        self.button_click("update")
+

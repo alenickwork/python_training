@@ -17,6 +17,30 @@ class GroupHelper:
         self.app.page_objects.input_click("Delete group(s)")
         self.return_to_groups_page()
 
+    def delete(self, group_data):
+        print("Delete group {0}".format(group_data.name))
+        self.open_groups_page()
+        to_del = self.app.wd.find_element_by_xpath(group_data.xpath.checkbox)
+        if to_del is None:
+            return None
+
+        if not to_del.is_selected():
+            to_del.click()
+        self.app.page_objects.input_click("Delete group(s)")
+        self.return_to_groups_page()
+
+    def modify(self, group_data, new_group_data):
+        print("Modify group {0}".format(group_data.name))
+        self.open_groups_page()
+        to_mod = self.app.wd.find_element_by_xpath(group_data.xpath.checkbox)
+        if to_mod is None:
+            return None
+        if not to_mod.is_selected():
+            to_mod.click()
+        self.app.page_objects.input_click("Edit group")
+        self._enter_data(new_group_data)
+        self.app.page_objects.update()
+        self.return_to_groups_page()
 
     def open_groups_page(self):
         print("Open groups page")
@@ -31,6 +55,11 @@ class GroupHelper:
 
     def _enter_data(self, group_data):
         print("Enter group data")
-        self.app.page_objects.text_input(field_name="group_name", value=group_data.name)
-        self.app.page_objects.text_input(field_name="group_header", value=group_data.header)
-        self.app.page_objects.text_input(field_name="group_footer", value=group_data.footer)
+        if group_data.name is not None:
+            self.app.page_objects.text_input(field_name="group_name", value=group_data.name)
+        if group_data.header is not None:
+            self.app.page_objects.text_input(field_name="group_header", value=group_data.header)
+        if group_data.footer is not None:
+            self.app.page_objects.text_input(field_name="group_footer", value=group_data.footer)
+
+

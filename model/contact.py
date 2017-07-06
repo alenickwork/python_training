@@ -1,81 +1,72 @@
 __author__ = "Elena Dimchenko"
 
-class Contact:
-    def __init__(self, firstname,
-                 middlename,
-                 lastname,
-                 nickname,
-                 photo_link,
-                 title,
-                 company,
-                 address,
-                 home_phone,
-                 mobile_phone,
-                 work_phone,
-                 fax,
-                 email_prior,
-                 email_2,
-                 email_3,
-                 homepage,
-                 birthday_day,
-                 birthday_month,
-                 birthday_year,
-                 anniversary_day,
-                 anniversary_month,
-                 anniversary_year,
-                 address_secondary,
-                 phone_secondary,
-                 notes
-                 ):
-        """
-        Contact record structure
-        :param firstname:
-        :param middlename:
-        :param lastname:
-        :param nickname:
-        :param photo_link: TBD
-        :param title:
-        :param company:
-        :param address:
-        :param home_phone:
-        :param mobile_phone:
-        :param fax:
-        :param email_prior:
-        :param email_2:
-        :param email_3:
-        :param homepage:
-        :param birthday_date:  must be like dd-mm-yyyy
-        :param anniversary_date:
-        :param address_secondary:
-        :param phone_secondary:
-        :param notes:
-        """
-        self.firstname = firstname
-        self.middlename = middlename
-        self.lastname = lastname
-        self.nickname = nickname
-        self.photo_link = photo_link
-        self.title = title
-        self.company = company
-        self.address = address
-        self.home_phone = home_phone
-        self.mobile_phone = mobile_phone
-        self.work_phone = work_phone
-        self.fax = fax
-        self.email_prior = email_prior
-        self.email_2 = email_2
-        self.email_3 = email_3
-        self.homepage = homepage
-        self.anniversary_day = anniversary_day
-        self.anniversary_month = anniversary_month
-        self.anniversary_year = anniversary_year
-        self.birthday_day = birthday_day
-        self.birthday_month = birthday_month
-        self.birthday_year = birthday_year
-        self.address_secondary = address_secondary
-        self.phone_secondary = phone_secondary
-        self.notes = notes
+import random
 
+class Contact:
+    def __init__(self, firstname = None,
+                 middlename = None,
+                 lastname = None,
+                 nickname = None,
+                 photo_link = None,
+                 title = None,
+                 company = None,
+                 address = None,
+                 home_phone = None,
+                 mobile_phone = None,
+                 work_phone = None,
+                 fax = None,
+                 email_prior = None,
+                 email_2 = None,
+                 email_3 = None,
+                 homepage = None,
+                 birthday_day = None,
+                 birthday_month = None,
+                 birthday_year = None,
+                 anniversary_day = None,
+                 anniversary_month = None,
+                 anniversary_year = None,
+                 address_secondary = None,
+                 phone_secondary = None,
+                 notes = None
+                 ):
+        local_vars=locals()
+        for r_arg in filter(lambda _: local_vars[_] == "random", local_vars.keys()):
+            if r_arg in ["anniversary_day", "birthday_day"]:
+                self.__dict__[r_arg] = str(random.randint(1,28))
+                continue
+            if r_arg in ["anniversary_month", "birthday_month"]:
+                self.__dict__[r_arg] = "August"
+                continue
+            if r_arg in ["anniversary_year", "birthday_year"]:
+                self.__dict__[r_arg] = str(random.randint(1900, 2017))
+                continue
+            self.__dict__[r_arg] = str(random.randint(100000, 999999))
+
+        for r_arg in filter(lambda _: local_vars[_] != "random", local_vars.keys()):
+           self.__dict__[r_arg] = local_vars[r_arg]
+
+    def dummy(self):
+        print("Creating dummy contact data")
+        for param in self.__dict__.keys():
+            self.__dict__[param] = str(random.randint(100000,999999))
+        self.photo_link = None
+        self.anniversary_day = str(random.randint(1,28))
+        self.anniversary_month = "June"
+        self.anniversary_year = str(random.randint(1950,2000))
+        self.birthday_day = str(random.randint(1,28))
+        self.birthday_month = "April"
+        self.birthday_year = str(random.randint(1950,2000))
+
+    @property
+    def xpath(self):
+        return xpath_records(self)
+
+
+class xpath_records:
+    def __init__(self, cont):
+        self.row = ".//table[@id='maintable']/descendant::tr[@name='entry']/descendant::td[text()='{last_name}']/following-sibling::td[text()='{first_name}']".format(last_name = cont.lastname, first_name = cont.firstname)
+        self.checkbox = self.row+"/preceding-sibling::td[@class='center']/input[@type='checkbox']"
+        self.edit = self.row+"/following-sibling::td[@class ='center']/a[contains(@href,'edit')]"
 
 
 
