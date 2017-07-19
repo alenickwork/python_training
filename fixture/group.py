@@ -1,5 +1,8 @@
-class GroupHelper:
+from fixture.actions import ActionsHelper
+
+class GroupHelper(ActionsHelper):
     def __init__(self,app):
+        super(GroupHelper,self).__init__(app)
         self.app = app
 
     def create(self, group_data):
@@ -7,14 +10,14 @@ class GroupHelper:
         self.open_groups_page()
         self._click_new()
         self._enter_data(group_data)
-        self.app.page_objects.submit()
+        self.submit()
         self.return_to_groups_page()
 
     def delete_first_group(self):
         print("Delete 1st group")
         self.open_groups_page()
-        self.app.page_objects.menu_item_click("selected[]")
-        self.app.page_objects.input_click("Delete group(s)")
+        self.menu_item_click("selected[]")
+        self.input_click("Delete group(s)")
         self.return_to_groups_page()
 
     def delete(self, group_data):
@@ -26,7 +29,7 @@ class GroupHelper:
 
         if not to_del.is_selected():
             to_del.click()
-        self.app.page_objects.input_click("Delete group(s)")
+        self.input_click("Delete group(s)")
         self.return_to_groups_page()
 
     def modify(self, group_data, new_group_data):
@@ -37,29 +40,29 @@ class GroupHelper:
             return None
         if not to_mod.is_selected():
             to_mod.click()
-        self.app.page_objects.input_click("Edit group")
+        self.input_click("Edit group")
         self._enter_data(new_group_data)
-        self.app.page_objects.update()
+        self.update()
         self.return_to_groups_page()
 
     def open_groups_page(self):
         print("Open groups page")
-        self.app.page_objects.link_click("groups")
+        self.link_click("groups")
 
     def return_to_groups_page(self):
         self.open_groups_page()
 
     def _click_new(self):
         print("Click new group")
-        self.app.page_objects.button_click("new")
+        self.button_click("new")
 
     def _enter_data(self, group_data):
         print("Enter group data")
         if group_data.name is not None:
-            self.app.page_objects.text_input(field_name="group_name", value=group_data.name)
+            self.text_input(field_name="group_name", value=group_data.name)
         if group_data.header is not None:
-            self.app.page_objects.text_input(field_name="group_header", value=group_data.header)
+            self.text_input(field_name="group_header", value=group_data.header)
         if group_data.footer is not None:
-            self.app.page_objects.text_input(field_name="group_footer", value=group_data.footer)
+            self.text_input(field_name="group_footer", value=group_data.footer)
 
 

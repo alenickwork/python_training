@@ -1,6 +1,6 @@
 from selenium.webdriver.support.ui import Select
 
-class PageObjectsHelper:
+class ActionsHelper:
 
     def __init__(self,app):
         self.app = app
