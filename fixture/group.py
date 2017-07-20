@@ -1,4 +1,9 @@
 from fixture.actions import ActionsHelper
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
 
 class GroupHelper(ActionsHelper):
     def __init__(self,app):
@@ -24,9 +29,6 @@ class GroupHelper(ActionsHelper):
         print("Delete group {0}".format(group_data.name))
         self.open_groups_page()
         to_del = self.app.wd.find_element_by_xpath(group_data.xpath.checkbox)
-        if to_del is None:
-            return None
-
         if not to_del.is_selected():
             to_del.click()
         self.input_click("Delete group(s)")
@@ -36,8 +38,6 @@ class GroupHelper(ActionsHelper):
         print("Modify group {0}".format(group_data.name))
         self.open_groups_page()
         to_mod = self.app.wd.find_element_by_xpath(group_data.xpath.checkbox)
-        if to_mod is None:
-            return None
         if not to_mod.is_selected():
             to_mod.click()
         self.input_click("Edit group")
@@ -66,9 +66,17 @@ class GroupHelper(ActionsHelper):
        print("{0} Groups found".format(tmp))
        return tmp
 
+    @property
+    def page_is_opened(self):
+        wd = self.app.wd
+        return wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0
+
     def open_groups_page(self):
-        print("Open groups page")
-        self.link_click("groups")
+        if not self.page_is_opened:
+            print("Open groups page")
+            self.link_click("groups")
+            self.wait_button_clickable("New group")
+
 
     def return_to_groups_page(self):
         self.open_groups_page()
@@ -76,6 +84,7 @@ class GroupHelper(ActionsHelper):
     def _click_new(self):
         print("Click new group")
         self.button_click("new")
+        self.wait_button_clickable("Enter information")
 
     def _enter_data(self, group_data):
         print("Enter group data")

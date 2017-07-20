@@ -1,5 +1,6 @@
 from fixture.actions import ActionsHelper
 
+
 class ContactHelper(ActionsHelper):
 
     def __init__(self,app):
@@ -7,15 +8,23 @@ class ContactHelper(ActionsHelper):
         self.app = app
         self.wd = app.wd
 
+    @property
+    def page_is_opened(self):
+        wd = self.app.wd
+        return len(wd.find_elements_by_xpath("//input[@value='Send e-Mail']")) > 0
+
     def open_contacts_page(self):
-        print("Open contacts page")
-        self.link_click("home")
+        if not self.page_is_opened:
+            print("Open contacts page")
+            self.link_click("home")
+            self.wait_button_clickable("Send e-Mail")
 
     def return_to_contacts_page(self):
         self.open_contacts_page()
 
     def create(self, contact_data):
         print("Create new contact")
+        self.open_contacts_page()
         self._click_new()
         self._enter_data(contact_data)
         self.submit()
@@ -68,6 +77,7 @@ class ContactHelper(ActionsHelper):
     def _click_new(self):
         print("Go to add new")
         self.link_click("add new")
+        self.wait_button_clickable("Enter")
 
     def _enter_data(self, contact_data):
         print("Input contact data")

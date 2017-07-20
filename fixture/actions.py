@@ -1,4 +1,7 @@
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class ActionsHelper:
 
@@ -38,4 +41,9 @@ class ActionsHelper:
 
     def update(self):
         self.button_click("update")
+
+    def wait_button_clickable(self, button_name):
+        wait = WebDriverWait(self.app.wd, 10)
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@value='{0}']".format(button_name))))
+
 
