@@ -8,9 +8,6 @@ import os
 from model.contact import Contact
 
 def test_add_contact(app):
-
-    app.session.login(username = "admin",
-              password = "secret")
     app.contact.create(Contact(firstname = "test_fn",
                                     middlename = "test_mn",
                                     lastname = "test_ln",
@@ -39,4 +36,3 @@ def test_add_contact(app):
                                     phone_secondary = "test_ph2",
                                     notes = "12121221")
                             )
-    app.session.logout()

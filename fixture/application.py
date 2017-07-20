@@ -3,7 +3,6 @@ __author__ = "Elena Dimchenko"
 
 from selenium.webdriver.firefox.webdriver import WebDriver
 from fixture.session import SessionHelper
-from fixture.actions import ActionsHelper
 from fixture.group import GroupHelper
 from fixture.contact import ContactHelper
 
@@ -20,7 +19,12 @@ class Application:
     def destroy(self):
         self.wd.quit()
 
-
+    def is_valid(self):
+        try:
+            self.wd.current_url
+            return True
+        except:
+            return False
 
 
 
