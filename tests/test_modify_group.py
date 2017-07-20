@@ -7,8 +7,9 @@ Task #7: modify group
 from model.group import Group
 
 def test_modify_group(app):
-    test_group = Group()
-    test_group.dummy()
-    app.group.create(test_group)
+    if app.group.count == 0:
+        test_group = Group()
+        test_group.dummy()
+        app.group.create(test_group)
     test_group_new = Group(name = "random")
-    app.group.modify(test_group, test_group_new)
+    app.group.modify_first(test_group_new)

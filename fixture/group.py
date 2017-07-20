@@ -45,6 +45,27 @@ class GroupHelper(ActionsHelper):
         self.update()
         self.return_to_groups_page()
 
+    def modify_first(self, new_group_data):
+        wd = self.app.wd
+        print("Modify first group")
+        self.open_groups_page()
+        self.menu_item_click("selected[]")
+        to_mod = wd.find_element_by_name("selected[]")
+        if not to_mod.is_selected():
+            to_mod.click()
+        self.input_click("Edit group")
+        self._enter_data(new_group_data)
+        self.update()
+        self.return_to_groups_page()
+
+    @property
+    def count(self):
+       wd = self.app.wd
+       self.open_groups_page()
+       tmp = len(wd.find_elements_by_name("selected[]"))
+       print("{0} Groups found".format(tmp))
+       return tmp
+
     def open_groups_page(self):
         print("Open groups page")
         self.link_click("groups")

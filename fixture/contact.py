@@ -20,12 +20,27 @@ class ContactHelper(ActionsHelper):
         self._enter_data(contact_data)
         self.submit()
 
+    @property
+    def count(self):
+        wd = self.app.wd
+        tmp = len(wd.find_elements_by_xpath("//td[@class='center']/input[@type='checkbox']"))
+        print("{0} Contacts found".format(tmp))
+        return tmp
+
+    def delete_first(self):
+        print("Delete 1st contact")
+        self.open_contacts_page()
+        to_del = self.wd.find_element_by_xpath("//td[@class='center']/input[@type='checkbox']")
+        if not to_del.is_selected():
+            to_del.click()
+        self.input_click("Delete")
+        self.wd.switch_to_alert().accept()
+        self.return_to_contacts_page()
+
     def delete(self, contact_data):
         print("Delete contact {0} {1}".format(contact_data.firstname, contact_data.lastname))
         self.open_contacts_page()
         to_del = self.wd.find_element_by_xpath(contact_data.xpath.checkbox)
-        if to_del is None:
-            return None
         if not to_del.is_selected():
             to_del.click()
         self.input_click("Delete")
@@ -36,6 +51,15 @@ class ContactHelper(ActionsHelper):
         print("Modify contact {0} {1}".format(contact_data.firstname, contact_data.lastname))
         self.open_contacts_page()
         to_mod = self.wd.find_element_by_xpath(contact_data.xpath.edit)
+        to_mod.click()
+        self._enter_data(new_contact_data)
+        self.input_click("Update")
+        self.return_to_contacts_page()
+
+    def modify_first(self, new_contact_data):
+        print("Modify first contact")
+        self.open_contacts_page()
+        to_mod = self.wd.find_element_by_xpath("//td[@class ='center']/a[contains(@href,'edit')]")
         to_mod.click()
         self._enter_data(new_contact_data)
         self.input_click("Update")
