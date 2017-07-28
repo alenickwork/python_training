@@ -1,9 +1,6 @@
 from fixture.actions import ActionsHelper
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
-
+from model.group import Group
 
 class GroupHelper(ActionsHelper):
     def __init__(self,app):
@@ -80,6 +77,16 @@ class GroupHelper(ActionsHelper):
 
     def return_to_groups_page(self):
         self.open_groups_page()
+
+    def get_group_list(self):
+        wd = self.app.wd
+        self.open_groups_page()
+        groups = []
+        for element in wd.find_elements_by_css_selector("span.group"):
+            text = element.text
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            groups.append(Group(name = text, id = id))
+        return groups
 
     def _click_new(self):
         print("Click new group")

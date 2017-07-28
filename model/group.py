@@ -1,27 +1,44 @@
 __author__ = "Elena Dimchenko"
 
-import random
+from .helpers.randomize import randomize_it
+from sys import maxsize
 
 class Group:
 
     def __init__(self,
                  name = None,
+                 id = None,
                  header = None,
-                 footer = None):
-        local_vars=locals()
-        for r_arg in filter(lambda _: local_vars[_] == "random", local_vars.keys()):
-            self.__dict__[r_arg] = str(random.randint(100000, 999999))
-        for r_arg in filter(lambda _: local_vars[_] != "random", local_vars.keys()):
-           self.__dict__[r_arg] = local_vars[r_arg]
+                 footer = None
+                 ):
+        self.name = randomize_it(name)
+        self.id = id
+        self.header = randomize_it(header)
+        self.footer = randomize_it(footer)
+        print(self.__repr__())
+
 
     def dummy(self):
         print("Creating dummy group data")
-        for param in self.__dict__.keys():
-            self.__dict__[param] = str(random.randint(100000,999999))
+        self.name = randomize_it("random")
+        self.header = randomize_it("random")
+        self.footer = randomize_it("random")
 
     @property
     def xpath(self):
         return xpath_records(self)
+
+    def __repr__(self):
+        return "%s:%s" % (self.id, self.name)
+
+    def __eq__(self, other):
+        return (self.id is None or other.id is None or self.id == other.id) and self.name == other.name
+
+    def id_or_max(self):
+        if self.id:
+            return int(self.id)
+        else:
+            return maxsize
 
 
 class xpath_records:

@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
 class ActionsHelper:
 
@@ -11,6 +12,7 @@ class ActionsHelper:
     def dropdown_select(self, field_name, value):
         print("\tdrop-down <{1}> |\tvalue <{0}>".format(value, field_name))
         select = Select(self.app.wd.find_element_by_name(field_name))
+        time.sleep(1)
         select.select_by_visible_text(value)
 
     def file_select(self, field_name, value):

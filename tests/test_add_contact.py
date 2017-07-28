@@ -6,9 +6,11 @@ Task #4: refactor for fixture usage
 import os
 
 from model.contact import Contact
+from model.contacts_list import ContactsList
 
 def test_add_contact(app):
-    app.contact.create(Contact(firstname = "test_fn",
+    old_contacts = ContactsList(app)
+    cont = Contact(firstname = "test_fn",
                                     middlename = "test_mn",
                                     lastname = "test_ln",
                                     nickname = "test_nn",
@@ -35,4 +37,15 @@ def test_add_contact(app):
                                     address_secondary = "test_addr2",
                                     phone_secondary = "test_ph2",
                                     notes = "12121221")
-                            )
+    app.contact.create(cont)
+
+    new_contacts = ContactsList(app)
+
+    print("Validate +1 element in list")
+    assert old_contacts.members_number + 1 == new_contacts.members_number
+    print("Done")
+
+    print("Validate new element's field in list")
+    old_contacts.members.append(cont)
+    assert old_contacts == new_contacts
+    print("Done")

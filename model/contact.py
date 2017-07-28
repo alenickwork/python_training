@@ -1,6 +1,8 @@
 __author__ = "Elena Dimchenko"
 
 import random
+from .helpers.randomize import randomize_it
+from sys import maxsize
 
 class Contact:
     def __init__(self, firstname = None,
@@ -27,40 +29,90 @@ class Contact:
                  anniversary_year = None,
                  address_secondary = None,
                  phone_secondary = None,
-                 notes = None
+                 notes = None,
+                 id = None
                  ):
         local_vars=locals()
-        for r_arg in filter(lambda _: local_vars[_] == "random", local_vars.keys()):
-            if r_arg in ["anniversary_day", "birthday_day"]:
-                self.__dict__[r_arg] = str(random.randint(1,28))
-                continue
-            if r_arg in ["anniversary_month", "birthday_month"]:
-                self.__dict__[r_arg] = "August"
-                continue
-            if r_arg in ["anniversary_year", "birthday_year"]:
-                self.__dict__[r_arg] = str(random.randint(1900, 2017))
-                continue
-            self.__dict__[r_arg] = str(random.randint(100000, 999999))
-
-        for r_arg in filter(lambda _: local_vars[_] != "random", local_vars.keys()):
-           self.__dict__[r_arg] = local_vars[r_arg]
+        self.firstname = randomize_it(firstname)
+        self.middlename = randomize_it(middlename)
+        self.lastname = randomize_it(lastname)
+        self.nickname = randomize_it(nickname)
+        self.photo_link = randomize_it(photo_link)
+        self.title = randomize_it(title)
+        self.company = randomize_it(company)
+        self.address = randomize_it(address)
+        self.home_phone = randomize_it(home_phone)
+        self.mobile_phone = randomize_it(mobile_phone)
+        self.work_phone = randomize_it(work_phone)
+        self.fax = randomize_it(fax)
+        self.email_prior = randomize_it(email_prior)
+        self.email_2 = randomize_it(email_2)
+        self.email_3 = randomize_it(email_3)
+        self.homepage = randomize_it(homepage)
+        self.birthday_day = randomize_it(birthday_day,"day_of_month")
+        self.birthday_month = randomize_it(birthday_month,"month")
+        self.birthday_year = randomize_it(birthday_year,"year")
+        self.anniversary_day = randomize_it(anniversary_day,"day_of_month")
+        self.anniversary_month = randomize_it(anniversary_month,"month")
+        self.anniversary_year = randomize_it(anniversary_year,"year")
+        self.address_secondary = randomize_it(address_secondary)
+        self.phone_secondary = randomize_it(phone_secondary)
+        self.notes = randomize_it(notes)
+        self.id = id
+        print(self.__repr__())
 
     def dummy(self):
         print("Creating dummy contact data")
-        for param in self.__dict__.keys():
-            self.__dict__[param] = str(random.randint(100000,999999))
+        self.firstname = randomize_it("random")
+        self.middlename = randomize_it("random")
+        self.lastname = randomize_it("random")
+        self.nickname = randomize_it("random")
         self.photo_link = None
-        self.anniversary_day = str(random.randint(1,28))
-        self.anniversary_month = "June"
-        self.anniversary_year = str(random.randint(1950,2000))
-        self.birthday_day = str(random.randint(1,28))
-        self.birthday_month = "April"
-        self.birthday_year = str(random.randint(1950,2000))
+        self.title = randomize_it("random")
+        self.company = randomize_it("random")
+        self.address = randomize_it("random")
+        self.home_phone = randomize_it("random")
+        self.mobile_phone = randomize_it("random")
+        self.work_phone = randomize_it("random")
+        self.fax = randomize_it("random")
+        self.email_prior = randomize_it("random")
+        self.email_2 = randomize_it("random")
+        self.email_3 = randomize_it("random")
+        self.homepage = randomize_it("random")
+        self.birthday_day = randomize_it("random","day_of_month")
+        self.birthday_month = randomize_it("random","month")
+        self.birthday_year = randomize_it("random","year")
+        self.anniversary_day = randomize_it("random","day_of_month")
+        self.anniversary_month = randomize_it("random","month")
+        self.anniversary_year = randomize_it("random","year")
+        self.address_secondary = randomize_it("random")
+        self.phone_secondary = randomize_it("random")
+        self.notes = randomize_it("random")
+        self.id = None
 
     @property
     def xpath(self):
         return xpath_records(self)
 
+    def __repr__(self):
+        return "%s : %s.%s" %(self.id, self.lastname, self.firstname)
+
+    def __eq__(self, other):
+        print("---------")
+        print(self.__repr__())
+        print(other.__repr__())
+        print (self.firstname is None or other.firstname is None or self.firstname == other.firstname)
+        print (self.lastname is None or other.lastname is None or self.lastname == other.lastname)
+        print (self.id is None or other.id is None or self.id == other.id)
+        return (self.firstname is None or other.firstname is None or self.firstname == other.firstname)\
+               and (self.lastname is None or other.lastname is None or self.lastname == other.lastname)\
+               and (self.id is None or other.id is None or self.id == other.id)
+
+    def id_or_max(self):
+        if self.id is not None:
+            return int(self.id)
+        else:
+            return maxsize
 
 class xpath_records:
     def __init__(self, cont):

@@ -1,4 +1,4 @@
-addressbook_url = "http://localhost/addressbook/"
+
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -24,9 +24,10 @@ class SessionHelper(ActionsHelper):
     def __init__(self,app):
         super(SessionHelper,self).__init__(app)
         self.app = app
+        self.addressbook_url = "http://localhost/addressbook/"
 
     def _open_addressbook(self):
-        self.app.wd.get(addressbook_url)
+        self.app.wd.get(self.addressbook_url)
 
     @assert_session_valid
     def login(self, username, password):

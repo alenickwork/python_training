@@ -1,7 +1,32 @@
 from fixture.actions import ActionsHelper
 
+from model.contact import Contact
+
+import contextlib
+import time
+# from selenium.webdriver import Remote
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support.expected_conditions import staleness_of
+
 
 class ContactHelper(ActionsHelper):
+
+    # @contextlib.contextmanager
+    # def wait_for_page_load(self):
+    #     timeout = 6
+    #     wd = self.app.wd
+    #     old_page = wd.find_element_by_xpath("//input[@value='Enter']")
+    #     yield
+    #     WebDriverWait(self, timeout).until(staleness_of(old_page))
+
+    # @contextlib.contextmanager
+    # def wait_for_init_page_load(self):
+    #     timeout = 6
+    #     wd = self.app.wd
+    #     yield
+    #     while not wd.getCurrentUrl().endswith("addressbook/"):
+    #         time.sleep(3)
+
 
     def __init__(self,app):
         super(ContactHelper,self).__init__(app)
@@ -12,6 +37,12 @@ class ContactHelper(ActionsHelper):
     def page_is_opened(self):
         wd = self.app.wd
         return len(wd.find_elements_by_xpath("//input[@value='Send e-Mail']")) > 0
+
+
+    def force_open_contacts_page(self):
+        print("Open contacts page")
+        self.link_click("home")
+        self.wait_button_clickable("Send e-Mail")
 
     def open_contacts_page(self):
         if not self.page_is_opened:
@@ -44,6 +75,7 @@ class ContactHelper(ActionsHelper):
             to_del.click()
         self.input_click("Delete")
         self.wd.switch_to_alert().accept()
+        time.sleep(3)
         self.return_to_contacts_page()
 
     def delete(self, contact_data):
@@ -54,6 +86,8 @@ class ContactHelper(ActionsHelper):
             to_del.click()
         self.input_click("Delete")
         self.wd.switch_to_alert().accept()
+        time.sleep(3)
+        self.wait_button_clickable("Delete")
         self.return_to_contacts_page()
 
     def modify(self, contact_data, new_contact_data):
@@ -73,6 +107,19 @@ class ContactHelper(ActionsHelper):
         self._enter_data(new_contact_data)
         self.input_click("Update")
         self.return_to_contacts_page()
+
+    def get_contacts_list(self):
+        wd = self.app.wd
+        self.open_contacts_page()
+        contacts = []
+        for element in wd.find_elements_by_name("entry"):
+            tmp = element.find_element_by_name("selected[]")
+            id = tmp.get_attribute("id")
+            (firstname, lastname) = tmp.get_attribute("title").split("(")[1].split(")")[0].split(" ")
+            tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id)
+            contacts.append(tmp_cont)
+        return contacts
+
 
     def _click_new(self):
         print("Go to add new")
