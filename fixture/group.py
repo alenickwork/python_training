@@ -14,6 +14,7 @@ class GroupHelper(ActionsHelper):
         self._enter_data(group_data)
         self.submit()
         self.return_to_groups_page()
+        self.group_cache = None
 
     def delete_first_group(self):
         print("Delete 1st group")
@@ -21,6 +22,7 @@ class GroupHelper(ActionsHelper):
         self.menu_item_click("selected[]")
         self.input_click("Delete group(s)")
         self.return_to_groups_page()
+        self.group_cache = None
 
     def delete(self, group_data):
         print("Delete group {0}".format(group_data.name))
@@ -30,6 +32,7 @@ class GroupHelper(ActionsHelper):
             to_del.click()
         self.input_click("Delete group(s)")
         self.return_to_groups_page()
+        self.group_cache = None
 
     def modify(self, group_data, new_group_data):
         print("Modify group {0}".format(group_data.name))
@@ -41,6 +44,7 @@ class GroupHelper(ActionsHelper):
         self._enter_data(new_group_data)
         self.update()
         self.return_to_groups_page()
+        self.group_cache = None
 
     def modify_first(self, new_group_data):
         wd = self.app.wd
@@ -54,6 +58,7 @@ class GroupHelper(ActionsHelper):
         self._enter_data(new_group_data)
         self.update()
         self.return_to_groups_page()
+        self.group_cache = None
 
     @property
     def count(self):
@@ -78,15 +83,18 @@ class GroupHelper(ActionsHelper):
     def return_to_groups_page(self):
         self.open_groups_page()
 
+    group_cache = None
+
     def get_group_list(self):
-        wd = self.app.wd
-        self.open_groups_page()
-        groups = []
-        for element in wd.find_elements_by_css_selector("span.group"):
-            text = element.text
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            groups.append(Group(name = text, id = id))
-        return groups
+        if self.group_cache is None:
+            wd = self.app.wd
+            self.open_groups_page()
+            self.group_cache = []
+            for element in wd.find_elements_by_css_selector("span.group"):
+                text = element.text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                self.group_cache.append(Group(name = text, id = id))
+        return list(self.group_cache)
 
     def _click_new(self):
         print("Click new group")

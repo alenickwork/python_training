@@ -22,7 +22,7 @@ def test_modify_group(app):
     new_groups = GroupsList(app)
 
     print("Validate num of elements in groups list")
-    assert old_groups.members_number == new_groups.members_number
+    assert old_groups.members_number_hashed == new_groups.members_number
     print("Done")
 
     print("Validate modified element's fields in groups list")

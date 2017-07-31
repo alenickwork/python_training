@@ -59,6 +59,7 @@ class ContactHelper(ActionsHelper):
         self._click_new()
         self._enter_data(contact_data)
         self.submit()
+        self.contact_cache = None
 
     @property
     def count(self):
@@ -77,6 +78,7 @@ class ContactHelper(ActionsHelper):
         self.wd.switch_to_alert().accept()
         time.sleep(3)
         self.return_to_contacts_page()
+        self.contact_cache = None
 
     def delete(self, contact_data):
         print("Delete contact {0} {1}".format(contact_data.firstname, contact_data.lastname))
@@ -89,6 +91,7 @@ class ContactHelper(ActionsHelper):
         time.sleep(3)
         self.wait_button_clickable("Delete")
         self.return_to_contacts_page()
+        self.contact_cache = None
 
     def modify(self, contact_data, new_contact_data):
         print("Modify contact {0} {1}".format(contact_data.firstname, contact_data.lastname))
@@ -98,6 +101,7 @@ class ContactHelper(ActionsHelper):
         self._enter_data(new_contact_data)
         self.input_click("Update")
         self.return_to_contacts_page()
+        self.contact_cache = None
 
     def modify_first(self, new_contact_data):
         print("Modify first contact")
@@ -108,17 +112,20 @@ class ContactHelper(ActionsHelper):
         self.input_click("Update")
         self.return_to_contacts_page()
 
+    contact_cache = None
+
     def get_contacts_list(self):
-        wd = self.app.wd
-        self.open_contacts_page()
-        contacts = []
-        for element in wd.find_elements_by_name("entry"):
-            tmp = element.find_element_by_name("selected[]")
-            id = tmp.get_attribute("id")
-            (firstname, lastname) = tmp.get_attribute("title").split("(")[1].split(")")[0].split(" ")
-            tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id)
-            contacts.append(tmp_cont)
-        return contacts
+        if self.contact_cache is None:
+            wd = self.app.wd
+            self.open_contacts_page()
+            self.contact_cache = []
+            for element in wd.find_elements_by_name("entry"):
+                tmp = element.find_element_by_name("selected[]")
+                id = tmp.get_attribute("id")
+                (firstname, lastname) = tmp.get_attribute("title").split("(")[1].split(")")[0].split(" ")
+                tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id)
+                self.contact_cache.append(tmp_cont)
+        return self.contact_cache
 
 
     def _click_new(self):

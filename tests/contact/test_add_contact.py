@@ -8,15 +8,15 @@ import os
 from model.contact import Contact
 from model.contacts_list import ContactsList
 
+from data import file as photo_link
+
 def test_add_contact(app):
     old_contacts = ContactsList(app)
     cont = Contact(firstname = "test_fn",
                                     middlename = "test_mn",
                                     lastname = "test_ln",
                                     nickname = "test_nn",
-                                    photo_link = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                                              "data",
-                                                              "Cute-White-Pigeon-Display-Picture.jpg"),
+                                    photo_link = photo_link,
                                     title = "test_title",
                                     company = "test_c",
                                     address = "test_addr",
@@ -42,7 +42,7 @@ def test_add_contact(app):
     new_contacts = ContactsList(app)
 
     print("Validate +1 element in list")
-    assert old_contacts.members_number + 1 == new_contacts.members_number
+    assert old_contacts.members_number_hashed + 1 == new_contacts.members_number
     print("Done")
 
     print("Validate new element's field in list")

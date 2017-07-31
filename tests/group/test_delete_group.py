@@ -19,7 +19,7 @@ def test_delete_1st_group(app):
     new_groups = GroupsList(app)
 
     print("Validate -1 element in groups list")
-    assert old_groups.members_number - 1 == new_groups.members_number
+    assert old_groups.members_number_hashed - 1 == new_groups.members_number
     print("Done")
 
     print("Validate elements equ in groups list")
@@ -39,7 +39,7 @@ def test_delete_group(app):
     new_groups = GroupsList(app)
 
     print("Validate -1 element in groups list")
-    assert old_groups.members_number - 1 == new_groups.members_number
+    assert old_groups.members_number_hashed - 1 == new_groups.members_number
     print("Done")
 
     print("Validate elements equ in groups list")

@@ -16,7 +16,7 @@ def test_delete_first_contact(app):
     new_contacts = ContactsList(app)
 
     print("Validate -1 element in list")
-    assert old_contacts.members_number - 1 == new_contacts.members_number
+    assert old_contacts.members_number_hashed - 1 == new_contacts.members_number
     print("Done")
 
     print("Validate elements equ in contacts list")
@@ -36,7 +36,7 @@ def test_delete_contact(app):
     new_contacts = ContactsList(app)
 
     print("Validate -1 element in list")
-    assert old_contacts.members_number - 1 == new_contacts.members_number
+    assert old_contacts.members_number_hashed - 1 == new_contacts.members_number
     print("Done")
 
     print("Validate elements equ in contacts list")

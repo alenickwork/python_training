@@ -9,3 +9,7 @@ class GroupsList(BaseList):
         self.normalize()
     def __eq__(self, other):
         return self.normalized == self.normalized
+
+    @property
+    def members_number(self):
+        return self.app.group.count

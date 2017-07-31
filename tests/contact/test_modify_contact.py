@@ -22,7 +22,7 @@ def test_modify_contact(app):
     new_contacts = ContactsList(app)
 
     print("Validate num of elements in list")
-    assert old_contacts.members_number == new_contacts.members_number
+    assert old_contacts.members_number_hashed == new_contacts.members_number
     print("Done")
 
     print("Validate modified element's fields in list")

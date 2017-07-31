@@ -9,7 +9,7 @@ class BaseList:
         return sorted(self.members, key = self.key)
 
     @property
-    def members_number(self):
+    def members_number_hashed(self):
         return len(self.members)
 
     def normalize(self):

@@ -17,7 +17,7 @@ def test_add_group(app):
     new_groups = GroupsList(app)
 
     print("Validate +1 element in groups list")
-    assert old_groups.members_number +1 == new_groups.members_number
+    assert old_groups.members_number_hashed +1 == new_groups.members_number
     print("Done")
 
     print("Validate new element's field in groups list")
@@ -34,7 +34,7 @@ def test_add_empty_group(app):
     new_groups = GroupsList(app)
 
     print("Validate +1 element in groups list")
-    assert old_groups.members_number +1 == new_groups.members_number
+    assert old_groups.members_number_hashed +1 == new_groups.members_number
     print("Done")
 
     print("Validate new element's field in groups list")
