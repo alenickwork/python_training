@@ -69,16 +69,24 @@ class ContactHelper(ActionsHelper):
         return tmp
 
     def delete_first(self):
-        print("Delete 1st contact")
+        self.delete_by_index(0)
+
+    def delete_by_index(self, index = 0):
+        print("Delete contact #{0}".format(index))
         self.open_contacts_page()
-        to_del = self.wd.find_element_by_xpath("//td[@class='center']/input[@type='checkbox']")
-        if not to_del.is_selected():
-            to_del.click()
+        self.select_by_index(index)
         self.input_click("Delete")
         self.wd.switch_to_alert().accept()
         time.sleep(3)
         self.return_to_contacts_page()
         self.contact_cache = None
+
+    def select_by_index(self, index):
+        wd = self.app.wd
+        to_del = self.wd.find_elements_by_xpath("//td[@class='center']/input[@type='checkbox']")[index]
+        if not to_del.is_selected():
+            to_del.click()
+        return to_del
 
     def delete(self, contact_data):
         print("Delete contact {0} {1}".format(contact_data.firstname, contact_data.lastname))
@@ -112,6 +120,21 @@ class ContactHelper(ActionsHelper):
         self.input_click("Update")
         self.return_to_contacts_page()
 
+    def modify_by_index(self, index, new_contact_data):
+        print("Modify contact #{0}".format(index))
+        self.open_contacts_page()
+        self.select_edit_by_index(index)
+        self._enter_data(new_contact_data)
+        self.input_click("Update")
+        self.return_to_contacts_page()
+
+    def select_edit_by_index(self, index):
+        wd = self.app.wd
+        to_mod = self.wd.find_elements_by_xpath("//td[@class ='center']/a[contains(@href,'edit')]")[index]
+        to_mod.click()
+        return to_mod
+
+
     contact_cache = None
 
     def get_contacts_list(self):
@@ -126,7 +149,6 @@ class ContactHelper(ActionsHelper):
                 tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id)
                 self.contact_cache.append(tmp_cont)
         return self.contact_cache
-
 
     def _click_new(self):
         print("Go to add new")

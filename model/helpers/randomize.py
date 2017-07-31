@@ -13,7 +13,7 @@ def randomize_it(value, type = "str"):
                         3:"March",
                         4:"April",
                         5:"May",
-                        6:"Jun",
+                        6:"June",
                         7:"July",
                         8:"August",
                         9:"September",

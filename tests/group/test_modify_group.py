@@ -6,6 +6,7 @@ Task #7: modify group
 
 from model.group import Group
 from model.groups_list import GroupsList
+from random import randrange
 
 def test_modify_group(app):
     if app.group.count == 0:
@@ -15,9 +16,13 @@ def test_modify_group(app):
 
     old_groups = GroupsList(app)
 
+
+    index = randrange(old_groups.members_number_hashed)
+
     test_group_new = Group(name = "random")
-    test_group_new.id = old_groups.members[0].id
-    app.group.modify_first(test_group_new)
+    test_group_new.id = old_groups.members[index].id
+
+    app.group.modify_by_index(index, test_group_new)
 
     new_groups = GroupsList(app)
 
@@ -26,6 +31,6 @@ def test_modify_group(app):
     print("Done")
 
     print("Validate modified element's fields in groups list")
-    old_groups.members[0] = test_group_new
+    old_groups.members[index] = test_group_new
     assert old_groups == new_groups
     print("Done")

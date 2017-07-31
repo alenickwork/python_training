@@ -6,9 +6,9 @@ class ContactsList(BaseList):
         super(ContactsList, self).__init__(app)
         self.members = self.app.contact.get_contacts_list()
         self.key = Contact.id_or_max
-        self.normalize()
+        #self.normalize()
     def __eq__(self, other):
-        return self.normalized == self.normalized
+        return self.normalized == other.normalized
 
     @property
     def members_number(self):

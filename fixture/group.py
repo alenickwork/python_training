@@ -17,12 +17,28 @@ class GroupHelper(ActionsHelper):
         self.group_cache = None
 
     def delete_first_group(self):
-        print("Delete 1st group")
+        self.delete_by_index(0)
+        # print("Delete 1st group")
+        # self.open_groups_page()
+        # self.menu_item_click("selected[]")
+        # self.input_click("Delete group(s)")
+        # self.return_to_groups_page()
+        # self.group_cache = None
+
+    def delete_by_index(self, index = 0):
+        print("Delete group # {0}".format(index))
         self.open_groups_page()
-        self.menu_item_click("selected[]")
+        self.select_group_by_index(index)
         self.input_click("Delete group(s)")
         self.return_to_groups_page()
         self.group_cache = None
+
+    def select_group_by_index(self, index):
+        wd = self.app.wd
+        el = wd.find_elements_by_name("selected[]")[index]
+        el.click()
+        return el
+
 
     def delete(self, group_data):
         print("Delete group {0}".format(group_data.name))
@@ -47,13 +63,13 @@ class GroupHelper(ActionsHelper):
         self.group_cache = None
 
     def modify_first(self, new_group_data):
+        self.modify_by_index(0,new_group_data)
+
+    def modify_by_index(self, index, new_group_data):
         wd = self.app.wd
-        print("Modify first group")
+        print("Modify group #{0}".format(index))
         self.open_groups_page()
-        self.menu_item_click("selected[]")
-        to_mod = wd.find_element_by_name("selected[]")
-        if not to_mod.is_selected():
-            to_mod.click()
+        self.select_group_by_index(index)
         self.input_click("Edit group")
         self._enter_data(new_group_data)
         self.update()

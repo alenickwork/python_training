@@ -14,3 +14,6 @@ class BaseList:
 
     def normalize(self):
         self.members = self.normalized
+
+    def delete_by_id(self, id):
+        self.members = filter(lambda _: _.id != id,self.members)

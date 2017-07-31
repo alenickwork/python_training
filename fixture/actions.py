@@ -12,8 +12,14 @@ class ActionsHelper:
     def dropdown_select(self, field_name, value):
         print("\tdrop-down <{1}> |\tvalue <{0}>".format(value, field_name))
         select = Select(self.app.wd.find_element_by_name(field_name))
-        time.sleep(1)
-        select.select_by_visible_text(value)
+        start = time.time()
+        while True:
+            try:
+                select.select_by_visible_text(value)
+                break
+            except:
+                assert time.time() - start < 5
+                time.sleep(1)
 
     def file_select(self, field_name, value):
         print("\tfile upload <{1}> |\tvalue <{0}>".format(value, field_name))
