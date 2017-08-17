@@ -2,13 +2,16 @@ import pytest
 from fixture.application import Application
 from fixture.session import SessionBroken
 
+
 fixture = None
 
 @pytest.fixture(scope="class")
 def app(request):
     global fixture
     if fixture is None:
-        fixture = Application()
+        browser = request.config.getoption("--browser")
+        url = request.config.getoption("--url")
+        fixture = Application(browser, url)
         fixture.session.login(username = "admin",
                   password = "secret")
     else:
@@ -27,3 +30,7 @@ def stop(request):
         except SessionBroken:
             pass
     request.addfinalizer(fin)
+
+def pytest_addoption(parser):
+    parser.addoption("--browser", action="store", default="firefox")
+    parser.addoption("--url", action="store", default="http://localhost/addressbook/")

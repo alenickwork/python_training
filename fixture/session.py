@@ -24,7 +24,7 @@ class SessionHelper(ActionsHelper):
     def __init__(self,app):
         super(SessionHelper,self).__init__(app)
         self.app = app
-        self.addressbook_url = "http://localhost/addressbook/"
+        self.addressbook_url = self.app.url
 
     def _open_addressbook(self):
         self.app.wd.get(self.addressbook_url)
