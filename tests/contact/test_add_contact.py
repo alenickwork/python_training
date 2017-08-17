@@ -9,35 +9,56 @@ from model.contact import Contact
 from model.contacts_list import ContactsList
 
 from data import file as photo_link
+import pytest
+import random
+import string
+def generate_str(prefix = "", maxlen = 20):
+    symbols = string.ascii_letters + string.digits + string.punctuation + " "*10
+    return prefix+''.join([random.choice(symbols) for i in range(random.randrange(maxlen))])
 
-def test_add_contact(app):
+testdata = [Contact(firstname = "",
+                    middlename = "",
+                    lastname = "",
+                    nickname = "",
+                    title = "",
+                    company = "",
+                    address = "",
+                    home_phone = "",
+                    mobile_phone = "",
+                    work_phone = "",
+                    fax = "",
+                    email_prior = "",
+                    email_2 = "",
+                    email_3 = "",
+                    homepage = "",
+                    address_secondary = "",
+                    phone_secondary = "",
+                    notes = "")] + [
+    Contact(firstname=generate_str("name",random.randint(5,20)),
+            middlename=generate_str("middlename",random.randint(5,20)),
+            lastname=generate_str("lastname",random.randint(5,20)),
+            nickname=generate_str("nickname",random.randint(5,20)),
+            title=generate_str("title",random.randint(5,20)),
+            company=generate_str("company",random.randint(5,20)),
+            address=generate_str("address",random.randint(5,20)),
+            home_phone=generate_str("home_phone",random.randint(5,20)),
+            mobile_phone=generate_str("mobile_phone",random.randint(5,20)),
+            work_phone=generate_str("work_phone",random.randint(5,20)),
+            fax=generate_str("fax",random.randint(5,20)),
+            email_prior=generate_str("email_prior",random.randint(5,20)),
+            email_2=generate_str("email_2",random.randint(5,20)),
+            email_3=generate_str("email_3",random.randint(5,20)),
+            homepage=generate_str("homepage",random.randint(5,20)),
+            address_secondary=generate_str("address_secondary",random.randint(5,20)),
+            phone_secondary=generate_str("phone_secondary",random.randint(5,20)),
+            notes=generate_str("notes",random.randint(5,20)))
+            for i in range(5)
+            ]
+
+@pytest.mark.parametrize("contact", testdata, ids=[repr(x) for x in testdata])
+def test_add_contact(app,contact):
     old_contacts = ContactsList(app)
-    cont = Contact(firstname = "test_fn",
-                                    middlename = "test_mn",
-                                    lastname = "test_ln",
-                                    nickname = "test_nn",
-                                    photo_link = photo_link,
-                                    title = "test_title",
-                                    company = "test_c",
-                                    address = "test_addr",
-                                    home_phone = "test_hph",
-                                    mobile_phone = "test_mph",
-                                    work_phone = "test_wph",
-                                    fax = "test_fx",
-                                    email_prior = "test_em1",
-                                    email_2 = "test_e2",
-                                    email_3 = "test_e3",
-                                    homepage = "test_hp",
-                                    birthday_day = "15",
-                                    birthday_month="March",
-                                    birthday_year="1982",
-                                    anniversary_day = "30",
-                                    anniversary_month="April",
-                                    anniversary_year="2011",
-                                    address_secondary = "test_addr2",
-                                    phone_secondary = "test_ph2",
-                                    notes = "12121221")
-    app.contact.create(cont)
+    app.contact.create(contact)
 
     new_contacts = ContactsList(app)
 
@@ -46,6 +67,6 @@ def test_add_contact(app):
     print("Done")
 
     print("Validate new element's field in list")
-    old_contacts.members.append(cont)
+    old_contacts.members.append(contact)
     assert old_contacts == new_contacts
     print("Done")

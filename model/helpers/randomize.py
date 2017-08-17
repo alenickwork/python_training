@@ -1,8 +1,10 @@
 import random
+import string
+
 def randomize_it(value, type = "str"):
     if value == "random":
         if type == "str":
-            return str(random.randint(100000, 999999))
+            return generate_str()
         if type == "year":
             return str(random.randint(1990,2017))
         if type == "day_of_month":
@@ -23,3 +25,6 @@ def randomize_it(value, type = "str"):
             return month_dict[random.randint(1, 12)]
     else:
         return value
+
+def generate_str():
+    return ''.join([random.choice(string.ascii_letters+string.digits) for i in range(random.randrange(20))])
