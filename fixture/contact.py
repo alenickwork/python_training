@@ -4,6 +4,7 @@ from model.contact import Contact
 
 import contextlib
 import time
+import re
 # from selenium.webdriver import Remote
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support.expected_conditions import staleness_of
@@ -123,14 +124,21 @@ class ContactHelper(ActionsHelper):
     def modify_by_index(self, index, new_contact_data):
         print("Modify contact #{0}".format(index))
         self.open_contacts_page()
-        self.select_edit_by_index(index)
+        self.open_contact_edit_by_index(index)
         self._enter_data(new_contact_data)
         self.input_click("Update")
         self.return_to_contacts_page()
 
-    def select_edit_by_index(self, index):
+    def open_contact_edit_by_index(self, index):
         wd = self.app.wd
         to_mod = self.wd.find_elements_by_xpath("//td[@class ='center']/a[contains(@href,'edit')]")[index]
+        to_mod.click()
+        return to_mod
+
+
+    def open_contact_view_by_index(self, index):
+        wd = self.app.wd
+        to_mod = self.wd.find_elements_by_xpath("//td[@class ='center']/a[contains(@href,'view')]")[index]
         to_mod.click()
         return to_mod
 
@@ -143,12 +151,51 @@ class ContactHelper(ActionsHelper):
             self.open_contacts_page()
             self.contact_cache = []
             for element in wd.find_elements_by_name("entry"):
-                tmp = element.find_element_by_name("selected[]")
-                id = tmp.get_attribute("id")
-                (firstname, lastname) = tmp.get_attribute("title").split("(")[1].split(")")[0].split(" ")
-                tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id)
+                cells = element.find_elements_by_tag_name("td")
+                firstname = cells[2].text
+                lastname = cells[1].text
+                id = cells[0].find_element_by_tag_name("input").get_attribute('value')
+                all_phones = cells[5].text#.splitlines()
+                all_mails = cells[4].text  # .splitlines()
+                tmp_cont = Contact(lastname = lastname, firstname = firstname, id = id,
+                                   all_phones_from_homepage = all_phones,
+                                   all_mails_from_homepage=all_mails
+                                   )
                 self.contact_cache.append(tmp_cont)
         return self.contact_cache
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contact_edit_by_index(index)
+
+        tmp =  Contact(firstname = wd.find_element_by_name('firstname').get_attribute('value'),
+                       lastname = wd.find_element_by_name('lastname').get_attribute('value'),
+                       id = wd.find_element_by_name('id').get_attribute('value'),
+                       home_phone = wd.find_element_by_name('home').get_attribute('value'),
+                       work_phone=wd.find_element_by_name('work').get_attribute('value'),
+                       mobile_phone=wd.find_element_by_name('mobile').get_attribute('value'),
+                       phone_secondary=wd.find_element_by_name('phone2').get_attribute('value'),
+                       email_prior=wd.find_element_by_name('email').get_attribute('value'),
+                       email_2=wd.find_element_by_name('email2').get_attribute('value'),
+                       email_3=wd.find_element_by_name('email3').get_attribute('value')
+                       )
+        self.return_to_contacts_page()
+
+        return tmp
+
+    def get_contact_info_from_view_page(self, index):
+        wd = self.app.wd
+        self.open_contact_view_by_index(index)
+        text = wd.find_element_by_id("content").text
+        home_phone = re.search("H: (.*)", text).group(1)
+        work_phone = re.search("W: (.*)", text).group(1)
+        mobile_phone = re.search("M: (.*)", text).group(1)
+        phone_secondary = re.search("P: (.*)", text).group(1)
+        self.return_to_contacts_page()
+        return Contact(home_phone = home_phone, work_phone=work_phone, mobile_phone=mobile_phone,
+                       phone_secondary=phone_secondary)
+
+
 
     def _click_new(self):
         print("Go to add new")

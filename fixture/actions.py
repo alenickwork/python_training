@@ -10,7 +10,7 @@ class ActionsHelper:
         self.app = app
 
     def dropdown_select(self, field_name, value):
-        print("\tdrop-down <{1}> |\tvalue <{0}>".format(value, field_name))
+        print('''   drop-down <{1}> |   value <{0}>'''.format(value, field_name))
         select = Select(self.app.wd.find_element_by_name(field_name))
         start = time.time()
         while True:
@@ -26,7 +26,7 @@ class ActionsHelper:
         self.app.wd.find_element_by_name(field_name).send_keys(value)
 
     def text_input(self, field_name, value):
-        print("\ttext input <{1}> |\tvalue <{0}>".format(value, field_name))
+        print('''   text input <{1}> |  value <{0}>'''.format(value, field_name))
         self.app.wd.find_element_by_name(field_name).click()
         self.app.wd.find_element_by_name(field_name).clear()
         self.app.wd.find_element_by_name(field_name).send_keys(value)

@@ -58,7 +58,11 @@ class SessionHelper(ActionsHelper):
     @assert_session_valid
     def is_logged_in_as(self, username):
         wd = self.app.wd
-        return username in wd.find_elemens_by_xpath("//form[@name='logout']/b").text
+        return self.get_logged_user() == username
+
+    def get_logged_user(self):
+        wd = self.app.wd
+        return wd.find_elemens_by_xpath("//form[@name='logout']/b").text[1:-1]
 
     @assert_session_valid
     def ensure_login(self, username, password):

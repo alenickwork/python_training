@@ -30,7 +30,9 @@ class Contact:
                  address_secondary = None,
                  phone_secondary = None,
                  notes = None,
-                 id = None
+                 id = None,
+                 all_phones_from_homepage = None,
+                 all_mails_from_homepage = None
                  ):
         local_vars=locals()
         self.firstname = randomize_it(firstname)
@@ -59,6 +61,8 @@ class Contact:
         self.phone_secondary = randomize_it(phone_secondary)
         self.notes = randomize_it(notes)
         self.id = id
+        self.all_phones_from_homepage = all_phones_from_homepage
+        self.all_mails_from_homepage = all_mails_from_homepage
         print(self.__repr__())
 
     def dummy(self):
