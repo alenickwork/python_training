@@ -1,36 +1,29 @@
-# -*- coding: utf-8 -*-
-__author__ = "Elena Dimchenko"
-"""
-Task #7: modify group
-"""
+from model.group import Group, clean
+import random
 
-from model.group import Group
-from model.groups_list import GroupsList
-from random import randrange
-
-def test_modify_group(app):
-    if app.group.count == 0:
+def test_modify_group(app, db, check_ui):
+    if len(db.get_group_list()) == 0:
         test_group = Group()
         test_group.dummy()
         app.group.create(test_group)
 
-    old_groups = GroupsList(app)
+    old_groups = db.get_group_list()
 
-
-    index = randrange(old_groups.members_number_hashed)
+    group = random.choice(old_groups)
 
     test_group_new = Group(name = "random")
-    test_group_new.id = old_groups.members[index].id
+    test_group_new.id = group.id
 
-    app.group.modify_by_index(index, test_group_new)
+    app.group.modify_by_id(group.id, test_group_new)
 
-    new_groups = GroupsList(app)
+    new_groups = db.get_group_list()
 
-    print("Validate num of elements in groups list")
-    assert old_groups.members_number_hashed == new_groups.members_number
-    print("Done")
+    assert len(old_groups) == len(new_groups)
 
-    print("Validate modified element's fields in groups list")
-    old_groups.members[index] = test_group_new
+    old_groups[old_groups.index(group)] = test_group_new
+
     assert old_groups == new_groups
-    print("Done")
+
+    if check_ui:
+        assert sorted(map(clean, new_groups), key = Group.id_or_max) == \
+            sorted(app.group.get_group_list(), key = Group.id_or_max)

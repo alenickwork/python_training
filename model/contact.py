@@ -4,6 +4,11 @@ import random
 from .helpers.randomize import randomize_it
 from sys import maxsize
 
+def clean(contact):
+    return Contact(id=contact.id,
+                   firstname=contact.firstname.strip(),
+                   lastname=contact.lastname.strip())
+
 class Contact:
     def __init__(self, firstname = None,
                  middlename = None,

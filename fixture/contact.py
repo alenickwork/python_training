@@ -72,6 +72,17 @@ class ContactHelper(ActionsHelper):
     def delete_first(self):
         self.delete_by_index(0)
 
+    def delete_by_id(self, id = 0):
+        print("Delete contact #{0}".format(id))
+        self.open_contacts_page()
+        self.select_by_id(id)
+        self.input_click("Delete")
+        self.wd.switch_to_alert().accept()
+        time.sleep(3)
+        self.return_to_contacts_page()
+        self.contact_cache = None
+
+
     def delete_by_index(self, index = 0):
         print("Delete contact #{0}".format(index))
         self.open_contacts_page()
@@ -84,7 +95,14 @@ class ContactHelper(ActionsHelper):
 
     def select_by_index(self, index):
         wd = self.app.wd
-        to_del = self.wd.find_elements_by_xpath("//td[@class='center']/input[@type='checkbox']")[index]
+        to_del = wd.find_elements_by_xpath("//td[@class='center']/input[@type='checkbox']")[index]
+        if not to_del.is_selected():
+            to_del.click()
+        return to_del
+
+    def select_by_id(self, id):
+        wd = self.app.wd
+        to_del = wd.find_element_by_css_selector("input[id='%s']" % id)
         if not to_del.is_selected():
             to_del.click()
         return to_del
@@ -129,9 +147,23 @@ class ContactHelper(ActionsHelper):
         self.input_click("Update")
         self.return_to_contacts_page()
 
+    def modify_by_id(self, id, new_contact_data):
+        print("Modify contact #{0}".format(id))
+        self.open_contacts_page()
+        self.open_contact_edit_by_id(id)
+        self._enter_data(new_contact_data)
+        self.input_click("Update")
+        self.return_to_contacts_page()
+
     def open_contact_edit_by_index(self, index):
         wd = self.app.wd
-        to_mod = self.wd.find_elements_by_xpath("//td[@class ='center']/a[contains(@href,'edit')]")[index]
+        to_mod = wd.find_elements_by_xpath("//td[@class ='center']/a[contains(@href,'edit')]")[index]
+        to_mod.click()
+        return to_mod
+
+    def open_contact_edit_by_id(self, id):
+        wd = self.app.wd
+        to_mod = wd.find_element_by_xpath(".//tr[td[input[@id='%s']]]/td[a[contains(@href,'edit')]]" % id)
         to_mod.click()
         return to_mod
 

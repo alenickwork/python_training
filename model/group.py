@@ -3,6 +3,10 @@ __author__ = "Elena Dimchenko"
 from .helpers.randomize import randomize_it
 from sys import maxsize
 
+
+def clean(group):
+    return Group(id=group.id, name=group.name.strip())
+
 class Group:
 
     def __init__(self,
@@ -15,7 +19,7 @@ class Group:
         self.id = id
         self.header = randomize_it(header)
         self.footer = randomize_it(footer)
-        print(self.__repr__())
+        #print(self.__repr__())
 
 
     def dummy(self):

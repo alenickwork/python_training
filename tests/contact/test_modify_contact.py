@@ -1,35 +1,31 @@
-# -*- coding: utf-8 -*-
-__author__ = "Elena Dimchenko"
-"""
-"""
+from model.contact import Contact, clean
+import random
 
-from model.contact import Contact
-from model.contacts_list import ContactsList
-from random import randrange
-
-def test_modify_contact(app):
-    if app.contact.count == 0:
+def test_modify_contact(app, db, check_ui):
+    if len(db.get_contact_list()) == 0:
         test_contact = Contact()
         test_contact.dummy()
         app.contact.create(test_contact)
 
-    old_contacts = ContactsList(app)
+    old_contacts = db.get_contact_list()
 
-    index = randrange(old_contacts.members_number_hashed)
+    cont = random.choice(old_contacts)
 
     test_contact_new = Contact(lastname="random",anniversary_month="random")
-    test_contact_new.id = old_contacts.members[index].id
+    test_contact_new.id = cont.id
 
-    app.contact.modify_by_index(index, test_contact_new)
+    app.contact.modify_by_id(cont.id, test_contact_new)
 
-    new_contacts = ContactsList(app)
+    new_contacts = db.get_contact_list()
 
-    print("Validate num of elements in list")
-    assert old_contacts.members_number_hashed == new_contacts.members_number
-    print("Done")
+    assert len(old_contacts) == len(new_contacts)
 
+    old_contacts[old_contacts.index(cont)] = test_contact_new
 
-    print("Validate modified element's fields in list")
-    old_contacts.members[index] = test_contact_new
     assert old_contacts == new_contacts
-    print("Done")
+
+    if check_ui:
+        assert sorted(map(clean, new_contacts), key = Contact.id_or_max) == \
+            sorted(app.contact.get_contacts_list(), key = Contact.id_or_max)
+
+

@@ -18,12 +18,6 @@ class GroupHelper(ActionsHelper):
 
     def delete_first_group(self):
         self.delete_by_index(0)
-        # print("Delete 1st group")
-        # self.open_groups_page()
-        # self.menu_item_click("selected[]")
-        # self.input_click("Delete group(s)")
-        # self.return_to_groups_page()
-        # self.group_cache = None
 
     def delete_by_index(self, index = 0):
         print("Delete group # {0}".format(index))
@@ -32,6 +26,21 @@ class GroupHelper(ActionsHelper):
         self.input_click("Delete group(s)")
         self.return_to_groups_page()
         self.group_cache = None
+
+
+    def delete_by_id(self, id = 0):
+        print("Delete group # {0}".format(id))
+        self.open_groups_page()
+        self.select_group_by_id(id)
+        self.input_click("Delete group(s)")
+        self.return_to_groups_page()
+        self.group_cache = None
+
+    def select_group_by_id(self, id):
+        wd = self.app.wd
+        el = wd.find_element_by_css_selector("input[value='%s']" % id)
+        el.click()
+        return el
 
     def select_group_by_index(self, index):
         wd = self.app.wd
@@ -64,6 +73,19 @@ class GroupHelper(ActionsHelper):
 
     def modify_first(self, new_group_data):
         self.modify_by_index(0,new_group_data)
+
+    def modify_by_id(self, id, new_group_data):
+        wd = self.app.wd
+        print("Modify group #{0}".format(id))
+        self.open_groups_page()
+        self.select_group_by_id(id)
+        self.input_click("Edit group")
+        self._enter_data(new_group_data)
+        self.update()
+        self.return_to_groups_page()
+        self.group_cache = None
+
+
 
     def modify_by_index(self, index, new_group_data):
         wd = self.app.wd

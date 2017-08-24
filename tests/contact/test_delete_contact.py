@@ -1,49 +1,28 @@
-# -*- coding: utf-8 -*-
-__author__ = "Elena Dimchenko"
-import os
+from model.contact import Contact, clean
+import random
 
-from model.contact import Contact
-from model.contacts_list import ContactsList
-from random import randrange
+def test_delete_some_contact(app, db, check_ui):
 
-def test_delete_some_contact(app):
-    if app.contact.count == 0:
+    if len(db.get_contact_list()) == 0:
         test_contact = Contact()
         test_contact.dummy()
         app.contact.create(test_contact)
-    old_contacts = ContactsList(app)
 
-    index = randrange(old_contacts.members_number_hashed)
-    app.contact.delete_by_index(index)
+    old_contacts = db.get_contact_list()
 
-    new_contacts = ContactsList(app)
+    cont = random.choice(old_contacts)
 
-    print("Validate -1 element in list")
-    assert old_contacts.members_number_hashed - 1 == new_contacts.members_number
-    print("Done")
+    app.contact.delete_by_id(cont.id)
 
-    print("Validate elements equ in contacts list")
-    del old_contacts.members[index]
+    new_contacts = db.get_contact_list()
+
+    assert len(old_contacts) - 1 == len(new_contacts)
+
+    old_contacts.remove(cont)
+
     assert old_contacts == new_contacts
-    print("Done")
 
+    if check_ui:
+        assert sorted(map(clean, new_contacts), key = Contact.id_or_max) == \
+            sorted(app.contact.get_contacts_list(), key = Contact.id_or_max)
 
-def test_delete_contact(app):
-    test_contact = Contact()
-    test_contact.dummy()
-    app.contact.create(test_contact)
-
-    old_contacts = ContactsList(app)
-    test_contact.id = old_contacts.normalized[-1].id
-
-    app.contact.delete(test_contact)
-    new_contacts = ContactsList(app)
-
-    print("Validate -1 element in list")
-    assert old_contacts.members_number_hashed - 1 == new_contacts.members_number
-    print("Done")
-
-    print("Validate elements equ in contacts list")
-    old_contacts.delete_by_id(test_contact.id)
-    assert old_contacts == new_contacts
-    print("Done")

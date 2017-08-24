@@ -1,17 +1,21 @@
-from model.contacts_list import ContactsList
+from model.contact import Contact, clean
 
-def test_add_contact(app,json_contacts):
+def test_add_contact(app,json_contacts, db, check_ui):
+
     contact = json_contacts
-    old_contacts = ContactsList(app)
+
+    old_contacts = db.get_contact_list()
+
     app.contact.create(contact)
 
-    new_contacts = ContactsList(app)
+    new_contacts = db.get_contact_list()
 
-    print("Validate +1 element in list")
-    assert old_contacts.members_number_hashed + 1 == new_contacts.members_number
-    print("Done")
+    assert len(old_contacts) + 1 == len(new_contacts)
 
-    print("Validate new element's field in list")
-    old_contacts.members.append(contact)
+    old_contacts.append(contact)
+
     assert old_contacts == new_contacts
-    print("Done")
+
+    if check_ui:
+        assert sorted(map(clean, new_contacts), key = Contact.id_or_max) == \
+            sorted(app.contact.get_contacts_list(), key = Contact.id_or_max)
