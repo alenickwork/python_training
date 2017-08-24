@@ -2,6 +2,7 @@ import pytest
 from fixture.application import Application
 from fixture.session import SessionBroken
 from fixture.db import DbFixture
+from fixture.orm import ORMFixture
 import json
 import jsonpickle
 import os
@@ -34,6 +35,16 @@ def app(request):
         fixture.session.login(username = web_config["username"],
                               password = web_config["password"])
     return fixture
+
+@pytest.fixture(scope="session")
+def orm(request):
+    db_config = load_config(request.config.getoption("--target"))['db']
+    ormfixture = ORMFixture(host = db_config['host'],
+                          name = db_config['name'],
+                          user = db_config['user'],
+                          password = db_config['password'])
+    return ormfixture
+
 
 @pytest.fixture(scope="session")
 def db(request):

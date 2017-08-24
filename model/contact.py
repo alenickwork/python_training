@@ -6,8 +6,8 @@ from sys import maxsize
 
 def clean(contact):
     return Contact(id=contact.id,
-                   firstname=contact.firstname.strip(),
-                   lastname=contact.lastname.strip())
+                   firstname=contact.firstname.strip().replace("  "," "),
+                   lastname=contact.lastname.strip().replace("  "," "))
 
 class Contact:
     def __init__(self, firstname = None,

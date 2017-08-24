@@ -19,7 +19,6 @@ class Group:
         self.id = id
         self.header = randomize_it(header)
         self.footer = randomize_it(footer)
-        #print(self.__repr__())
 
 
     def dummy(self):

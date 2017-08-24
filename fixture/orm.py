@@ -4,6 +4,14 @@ from model.group import Group
 from model.contact import Contact
 from pymysql.converters import decoders
 
+
+from pymysql.converters import encoders, decoders, convert_mysql_timestamp
+
+conv = encoders
+conv.update(decoders)
+conv[datetime] = convert_mysql_timestamp
+
+
 class ORMFixture:
     db = Database()
 
@@ -24,15 +32,18 @@ class ORMFixture:
         deprecated = Optional(datetime, column= 'deprecated')
         groups = Set(lambda: ORMFixture.ORMGroup, table = 'address_in_groups',
                      column = "group_id", reverse = "contacts", lazy = True)
-
+        email_prior = Optional(str, column= 'email')
+        email_2 = Optional(str, column= 'email2')
+        email_3 = Optional(str, column= 'email3')
+        home_phone = Optional(str, column= 'home')
+        mobile_phone = Optional(str, column= 'mobile')
+        work_phone = Optional(str, column= 'work')
+        phone_secondary = Optional(str, column= 'phone2')
 
     def __init__(self,host, name, user, password):
-        self.db.bind('mysql',host = host,database = name,
-                     user = user,password = password,
-                     autocommit=True,
-                     conv=decoders)
+        self.db.bind('mysql', host=host, database=name, user=user, password=password, autocommit=True,conv=conv)
         self.db.generate_mapping()
-        sql_debug(True)
+        #sql_debug(True)
 
     def convert_groups_to_model(self, groups):
         def convert(group):
@@ -48,18 +59,45 @@ class ORMFixture:
         return self.convert_groups_to_model(list(select(g for g in ORMFixture.ORMGroup)))
 
 
-    def convert_contacts_to_model(self, contacts):
+    def convert_contacts_to_model(self, contacts, full = False):
         def convert(cont):
             return Contact(id = str(cont.id),
                            firstname = cont.firstname,
                            lastname = cont.lastname)
-        return list(map(convert, contacts))
+        def convert_full(cont):
+            return Contact(id = str(cont.id),
+                           firstname = cont.firstname,
+                           lastname = cont.lastname,
+                           email_prior = cont.email_prior,
+                           email_2 = cont.email_2,
+                           email_3 = cont.email_3,
+                           home_phone = cont.home_phone,
+                           mobile_phone = cont.mobile_phone,
+                           work_phone = cont.work_phone,
+                           phone_secondary = cont.phone_secondary
+            )
+        if not full:
+            return list(map(convert, contacts))
+        else:
+            return list(map(convert_full, contacts))
+
 
     @db_session
-    def get_contact_list(self):
-        return self.convert_contacts_to_model(select(c for c in ORMFixture.ORMContact if c.deprecated is None))
+    def get_contact_list(self, full = False):
+        return self.convert_contacts_to_model(select(c for c in ORMFixture.ORMContact if c.deprecated is None), full)
+
+    @db_session
+    def get_contact_by_id(self, id, full = False):
+        return self.convert_contacts_to_model(select(c for c in ORMFixture.ORMContact if c.deprecated is None and c.id == id), full)[0]
 
     @db_session
     def get_contacts_in_group(self, group):
         orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))[0]
         return self.convert_contacts_to_model(orm_group.contacts)
+
+    @db_session
+    def get_contacts_not_in_group(self, group):
+        orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))[0]
+        conts = select(c for c in ORMFixture.ORMContact if c.deprecated is None and orm_group not in c.groups)
+
+        return self.convert_contacts_to_model(conts)

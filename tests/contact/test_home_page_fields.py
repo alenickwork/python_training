@@ -1,27 +1,35 @@
 import pytest
 import re
 
+from model.contact import clean
+
 class TestHomePageContact:
+
     @classmethod
     @pytest.fixture(scope="class", autouse=True)
-    def setup(self, app):
+    def setup(self, app, orm):
         self.app = app
-        self.contact_from_home_page = self.app.contact.get_contacts_list()[0]
-        self.contact_from_edit_page = self.app.contact.get_contact_info_from_edit_page(0)
+        self.orm = orm
+        self.contact_from_home_page = self.app.contact.get_contacts_list()
+        self.contacts_from_db = self.orm.get_contact_list()
+        assert len(self.contact_from_home_page) == len(self.contacts_from_db)
 
     def test_lastname(self):
-        assert self.contact_from_home_page.lastname == self.contact_from_edit_page.lastname
+        for contact in self.contact_from_home_page:
+            assert contact.lastname == clean(self.orm.get_contact_by_id(contact.id)).lastname
 
     def test_firstname(self):
-        assert self.contact_from_home_page.firstname == self.contact_from_edit_page.firstname
+        for contact in self.contact_from_home_page:
+            assert contact.firstname == clean(self.orm.get_contact_by_id(contact.id)).firstname
 
     def test_mail(self):
-        assert self.contact_from_home_page.all_mails_from_homepage == \
-               merge_mails_like_on_home_page(self.contact_from_edit_page)
+        for contact in self.contact_from_home_page:
+            assert contact.all_mails_from_homepage == merge_mails_like_on_home_page(self.orm.get_contact_by_id(contact.id, full = True))
+
 
     def test_phones(self):
-        assert self.contact_from_home_page.all_phones_from_homepage == \
-               merge_phones_like_on_home_page(self.contact_from_edit_page)
+        for contact in self.contact_from_home_page:
+            assert contact.all_phones_from_homepage == merge_phones_like_on_home_page(self.orm.get_contact_by_id(contact.id, full = True))
 
 
 def merge_phones_like_on_home_page(contact):
