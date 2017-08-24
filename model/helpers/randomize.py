@@ -24,7 +24,7 @@ def randomize_it(value, type = "str"):
                         12:"December"}
             return month_dict[random.randint(1, 12)]
     else:
-        return value
+        return None
 
 def generate_str():
     return ''.join([random.choice(string.ascii_letters+string.digits) for i in range(random.randrange(20))])
